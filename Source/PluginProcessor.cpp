@@ -19,7 +19,8 @@ CompressorAudioProcessor::CompressorAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+    apvts(*this, nullptr, "Parameters", createParameterLayout())
 #endif
 {
 }
@@ -188,4 +189,20 @@ void CompressorAudioProcessor::setStateInformation (const void* data, int sizeIn
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new CompressorAudioProcessor();
+}
+
+// Fill a vector with the parameters used for the plugin
+juce::AudioProcessorValueTreeState::ParameterLayout CompressorAudioProcessor::createParameterLayout()
+{
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
+
+    // Gain
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "gain",      // Parameter ID
+        "Gain",      // Parameter Name
+        0.0f,        // Min
+        1.0f,        // Max
+        0.5f));      // Default
+
+    return { params.begin(), params.end() };
 }

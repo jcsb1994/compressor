@@ -20,6 +20,8 @@ public:
     CompressorAudioProcessor();
     ~CompressorAudioProcessor() override;
 
+    juce::AudioProcessorValueTreeState apvts;
+
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
@@ -54,6 +56,8 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+    juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CompressorAudioProcessor)
 };
