@@ -23,6 +23,7 @@ CompressorAudioProcessor::CompressorAudioProcessor()
     apvts(*this, nullptr, "Parameters", createParameterLayout())
 #endif
 {
+    gainParam = apvts.getRawParameterValue("gain");
 }
 
 CompressorAudioProcessor::~CompressorAudioProcessor()
@@ -151,11 +152,17 @@ void CompressorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
+
+    // Get the atomics from apvts
+    float gainDb = gainParam->load(); // provided by the <atomic> header, atomically obtains the current value. Note: dereferencing an atomic calls load() anyway
+    float gain = juce::Decibels::decibelsToGain(gainDb);
+
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);
 
-        // ..do something to the data...
+        buffer.applyGain(channel, 0, buffer.getNumSamples(), gain);
+
     }
 }
 
